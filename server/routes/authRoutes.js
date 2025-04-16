@@ -6,7 +6,7 @@ const authController = require('../controllers/authController');
 router.post('/google', authController.googleAuth);
 router.get('/me', passport.authenticate('jwt', { session: false }), authController.getMe);
 
-// Google OAuth routes
+
 router.get('/google', passport.authenticate('google', {
   scope: ['profile', 'email']
 }));

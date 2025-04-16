@@ -7,6 +7,7 @@ const DocumentSchema = new mongoose.Schema({
   },
   content: {
     type: Object,
+    required:true,
     default: { ops: [] }
   },
   owner: {

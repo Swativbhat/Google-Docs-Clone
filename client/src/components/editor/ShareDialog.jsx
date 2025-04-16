@@ -2,16 +2,11 @@ import React, { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button } from '@mui/material';
 import { shareDocument } from '../../Services/documents';
 
-export default function ShareModal({ open, onClose, documentId }) {
+export default function ShareDialog({ open, onClose, documentId }) {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
 
   const handleShare = async () => {
-    if (!email) {
-      setError('Email is required');
-      return;
-    }
-
     try {
       await shareDocument(documentId, email);
       onClose();
@@ -27,23 +22,18 @@ export default function ShareModal({ open, onClose, documentId }) {
         <TextField
           autoFocus
           margin="dense"
-          label="Collaborator Email"
+          label="User Email"
           type="email"
           fullWidth
           value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            setError('');
-          }}
+          onChange={(e) => setEmail(e.target.value)}
           error={!!error}
           helperText={error}
         />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleShare} color="primary">
-          Share
-        </Button>
+        <Button onClick={handleShare} disabled={!email}>Share</Button>
       </DialogActions>
     </Dialog>
   );

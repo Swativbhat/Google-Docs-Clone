@@ -5,7 +5,7 @@ import Header from '../components/layout/Header';
 import Sidebar from '../components/layout/Sidebar';
 import Editor from '../components/editor/Editor';
 import EditorToolbar from '../components/editor/EditorToolbar';
-import RealTimeChat from '../components/editor/RealTimeChat';
+
 import ShareModal from '../components/editor/ShareModal';
 
 export default function DocumentPage() {
@@ -36,7 +36,7 @@ export default function DocumentPage() {
           <div className="flex-1 overflow-auto">
             <Editor documentId={id} />
           </div>
-          <RealTimeChat documentId={id} />
+
         </div>
       </div>
       

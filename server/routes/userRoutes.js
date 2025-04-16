@@ -56,5 +56,10 @@ router.get('/search', passport.authenticate('jwt', { session: false }), async (r
     res.status(500).json({ message: 'Server error' });
   }
 });
+// Backend: Add this route if missing
+router.get('/', async (req, res) => {
+  const users = await User.find({}, 'name email avatar'); // Only return necessary fields
+  res.json(users);
+});
 
 module.exports = router;

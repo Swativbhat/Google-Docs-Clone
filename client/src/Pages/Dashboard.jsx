@@ -1,22 +1,35 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../Contexts/AuthContext';
-import Header from '../components/layout/Header';
-import Sidebar from '../components/layout/Sidebar';
-import NewDocumentButton from '../components/dashboard/NewDocumentButton';
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../Contexts/AuthContext";
+import Header from "../components/layout/Header";
+import Sidebar from "../components/layout/Sidebar";
+import { useNotifications } from "../Contexts/NotificationContext";
+import NewDocumentButton from "../components/dashboard/NewDocumentButton";
+import DocumentList from "../components/dashboard/DocumentList";
+
+
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const { notifications, refresh } = useNotifications();
+
+  useEffect(() => {
+    refresh();
+  }, []);
 
   useEffect(() => {
     if (!loading && !user) {
-      navigate('/');
+      navigate("/");
     }
   }, [user, loading, navigate]);
 
   if (loading || !user) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        Loading...
+      </div>
+    );
   }
 
   return (
@@ -36,6 +49,9 @@ export default function Dashboard() {
           </div>
         </main>
       </div>
-    </div>
+        <div className="main-content">
+          <DocumentList />
+        </div>
+      </div>
   );
 }

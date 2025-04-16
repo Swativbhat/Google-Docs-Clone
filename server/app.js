@@ -5,11 +5,11 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const connectDB = require('./config/db');
 
-// Import passport configurations
-require('./config/passport'); // This loads both Google and JWT strategies
+
+require('./config/passport'); 
 require('./config/jwtStrategy');
 
-// Create express app
+
 const app = express();
 
 // Connect to database

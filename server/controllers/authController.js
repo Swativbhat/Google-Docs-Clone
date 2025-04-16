@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const { sendWelcomeEmail } = require('../services/emailService');
+
 
 exports.googleAuth = async (req, res) => {
   try {

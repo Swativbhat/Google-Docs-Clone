@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { useAuth } from '../../../Contexts/AuthContext';
+import { useAuth } from '../../Contexts/AuthContext';
 import { TrashIcon, PencilIcon, ShareIcon } from '@heroicons/react/outline';
 
 export default function DocumentList() {
@@ -101,11 +101,11 @@ export default function DocumentList() {
               className="p-1 text-gray-500 hover:text-blue-600"
               title="Share"
             >
-              <ShareIcon className="h-5 w-5" />
+             
             </button>
             <button
               onClick={() => handleDelete(document._id)}
-              className="p-1 text-gray-500 hover:text-red-600"
+              className="absolute p-1 left-60 text-gray-500 hover:text-red-600"
               title="Delete"
             >
               <TrashIcon className="h-5 w-5" />

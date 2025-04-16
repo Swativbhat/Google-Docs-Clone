@@ -17,15 +17,24 @@ export function SocketProvider({ children }) {
 
     newSocket.on('connect', () => {
       console.log('Socket connected');
+      // Moved inside connect handler to ensure socket is ready
+      newSocket.emit('join-user-room', user._id);
     });
 
     newSocket.on('disconnect', () => {
       console.log('Socket disconnected');
     });
 
+    // Add notification handler
+    newSocket.on('notification', (notification) => {
+      // You might want to handle incoming notifications here
+      console.log('New notification:', notification);
+    });
+
     setSocket(newSocket);
 
     return () => {
+      newSocket.off('notification'); // Clean up event listener
       newSocket.disconnect();
     };
   }, [user]);

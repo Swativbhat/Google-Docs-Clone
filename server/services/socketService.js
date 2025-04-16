@@ -1,52 +1,65 @@
-const socketio = require('socket.io');
-
+const socketio = require("socket.io");
+const { saveDocumentContent,getDocumentContent  } = require("./documentService");
 let io;
 
 const init = (server) => {
   io = socketio(server, {
     cors: {
       origin: process.env.BASE_URL,
-      methods: ["GET", "POST"]
-    }
+      methods: ["GET", "POST"],
+    },
   });
 
-  io.on('connection', (socket) => {
-    console.log('New client connected');
+  io.on("connection", (socket) => {
+    console.log("New client connected");
 
-    socket.on('join-document', (documentId) => {
-      if (!documentId) {
-        console.error("Document ID is undefined or invalid.");
-        return;
+    socket.on("join-document", async (documentId) => {
+      socket.join(documentId);
+      try {
+        const content = await getDocumentContent(documentId);
+        socket.emit("load-document", content);
+      } catch (error) {
+        console.error("Error loading document:", error);
       }
-      socket.join(documentId);  // Join the room
-      console.log(`User joined document room: ${documentId}`);
     });
 
-    socket.on('send-changes', (delta, documentId) => {
-      if (!delta || !documentId) {
-        console.error("Missing delta or document ID.");
-        return;
+    socket.on("send-changes", async (delta, documentId) => {
+      if (!delta || !documentId) return;
+
+
+      socket.to(documentId).emit("receive-changes", delta);
+
+
+      try {
+        const quill = getQuillInstanceForDocument(documentId); 
+        const content = quill.getContents();
+        await saveDocumentContent(documentId, content);
+      } catch (error) {
+        console.error("Error saving changes:", error);
       }
-      console.log('Document ID:', documentId);
-      if (!socket.rooms.has(documentId)) {
-        console.error(`Socket is not in room ${documentId}`);
-        return;
-      }
-      socket.to(documentId).broadcast.emit('receive-changes', delta);
     });
 
-    socket.on('send-message', (message, documentId) => {
+    socket.on("send-message", (message, documentId) => {
       const chatMessage = {
         user: socket.user,
         message,
         documentId,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
-      io.to(documentId).emit('receive-message', chatMessage);
+      io.to(documentId).emit("receive-message", chatMessage);
     });
 
-    socket.on('disconnect', () => {
-      console.log('Client disconnected');
+    socket.on("join-user-room", (userId) => {
+      socket.join(userId);
+    });
+
+    socket.on("notification", (data) => {
+      console.log("Received notification:", data); 
+
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Client disconnected");
     });
   });
 
@@ -55,12 +68,12 @@ const init = (server) => {
 
 const getIO = () => {
   if (!io) {
-    throw new Error('Socket.io not initialized');
+    throw new Error("Socket.io not initialized");
   }
   return io;
 };
 
 module.exports = {
   init,
-  getIO
+  getIO,
 };
